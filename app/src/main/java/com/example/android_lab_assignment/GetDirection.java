@@ -36,8 +36,10 @@ public class GetDirection extends AsyncTask <Object, String, String>
         url = (String) objects[1];
         latLng  =(LatLng) objects[2];
         latLng_user = (LatLng)objects[3];
-        dist = (TextView) objects[4];
-        dur = (TextView) objects[5];
+        if(objects[3] != null && objects[4]!=null) {
+            dist = (TextView) objects[4];
+            dur = (TextView) objects[5];
+        }
 
         FetchURL fetchURL = new FetchURL();
         try{
@@ -83,8 +85,10 @@ public class GetDirection extends AsyncTask <Object, String, String>
             DataParser directionParser = new DataParser();
             directionList = directionParser.parseDirection(s);
             displayDirection(directionList);
+        if(dist!=null && dur!=null) {
             dist.setText(distance);
             dur.setText(duration);
+        }
         //}
 
     }

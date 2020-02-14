@@ -75,23 +75,23 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             @Override
             public void onClick(View view)
             {
-                if(expanded) {
-
-                    holder.lat.setVisibility(View.GONE);
-                    holder.lng.setVisibility(View.GONE);
-                    notifyItemChanged(position);
-                    expanded = false;
-                }
-                else
-                {
-                    holder.lat.setVisibility(View.VISIBLE);
-                    holder.lng.setVisibility(View.VISIBLE);
-                    notifyItemChanged(position);
-                    expanded = true;
-
-                }
-                //notifyDataSetChanged();
-                notifyItemChanged(position);
+//                if(expanded) {
+//
+//                    holder.lat.setVisibility(View.GONE);
+//                    holder.lng.setVisibility(View.GONE);
+//                    notifyItemChanged(position);
+//                    expanded = false;
+//                }
+//                else
+//                {
+//                    holder.lat.setVisibility(View.VISIBLE);
+//                    holder.lng.setVisibility(View.VISIBLE);
+//                    notifyItemChanged(position);
+//                    expanded = true;
+//
+//                }
+//                //notifyDataSetChanged();
+//                notifyItemChanged(position);
             }
         });
         holder.directionBtn.setOnClickListener(new View.OnClickListener() {

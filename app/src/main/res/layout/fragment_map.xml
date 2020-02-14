@@ -172,7 +172,7 @@
             android:layout_gravity="bottom"
             android:backgroundTint="@color/quantum_bluegrey400"
             app:backgroundTint="@color/quantum_bluegrey400"
-            android:src="@drawable/ic_action_direction"
+            android:src="@drawable/ic_action_direction1"
             android:layout_marginTop="10dp"
             android:id="@+id/direction_btn"
             android:elevation="25dp"

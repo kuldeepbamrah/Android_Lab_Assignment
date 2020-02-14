@@ -2,6 +2,7 @@ package com.example.android_lab_assignment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android_lab_assignment.Nearby.GetNearbyPlaceData;
@@ -60,6 +62,9 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
     static Boolean directionRequested,presentInDB;
     BottomNavigationView bottomNavigationView;
     FavLocation favLocation;
+    CardView cardView;
+    TextView distance,duration;
+    Button stopNavigation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +180,14 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
 
         favbtn = findViewById(R.id.fav_btn);
         favbtn.setOnClickListener(this);
+        cardView = findViewById(R.id.customdistance);
+
+        distance = findViewById(R.id.distance_tv);
+        duration  = findViewById(R.id.durationTv);
+
+        stopNavigation = findViewById(R.id.stop_navigationBtn);
+        stopNavigation.setOnClickListener(this);
+
     }
 
     @Override
@@ -306,15 +319,19 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
             case R.id.direction_btn:
                 url = getDirectionUrl();
                 Log.i("Main Activity",url);
-                Object[] dataTransfer = new Object[4];
+                Object[] dataTransfer = new Object[6];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = new LatLng(destLat,destLong);
                 dataTransfer[3] = new LatLng(favLocation.getLatitude(),favLocation.getLongitude());
+                dataTransfer[4] = distance;
+                dataTransfer[5] = duration;
                 GetDirection getDirection = new GetDirection();
                 getDirection.execute(dataTransfer);
                 directionRequested = true;
                 directionBtn.setVisibility(View.GONE);
+                favbtn.setVisibility(View.GONE);
+                cardView.setVisibility(View.VISIBLE);
 
                 break;
 
@@ -341,6 +358,12 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
                     favbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_fav));
                 }
 
+            case R.id.stop_navigationBtn:
+                cardView.setVisibility(View.GONE);
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(new LatLng(favLocation.latitude,favLocation.longitude)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+
 
         }
     }
@@ -358,10 +381,12 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
         url = getUrl( favLocation.latitude, favLocation.longitude, place );
         Log.i("MainActivity", url);
         // setmarkers( url );
-        Object[] dataTransfer = new Object[3];
+        Object[] dataTransfer = new Object[5];
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
         dataTransfer[2] = new LatLng(favLocation.latitude,favLocation.longitude);
+        dataTransfer[3] = null;
+        dataTransfer[4] = null;
         GetNearbyPlaceData getNearbyPlaceData = new GetNearbyPlaceData();
         getNearbyPlaceData.execute(dataTransfer);
         mMap.addMarker(new MarkerOptions().position(new LatLng(favLocation.latitude,favLocation.latitude))
