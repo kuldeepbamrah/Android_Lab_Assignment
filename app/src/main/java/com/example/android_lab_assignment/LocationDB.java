@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import java.security.acl.LastOwnerException;
 
-@Database(entities = FavLocation.class , exportSchema = false , version = 1)
+@Database(entities = FavLocation.class , exportSchema = false , version = 2)
 public abstract class LocationDB extends RoomDatabase
 {
 

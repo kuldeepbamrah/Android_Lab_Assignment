@@ -32,6 +32,28 @@ public class FavLocation implements Parcelable
     @ColumnInfo(name = "address")
     String address = "";
 
+    @ColumnInfo(name = "name")
+    String name = "";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getVisited() {
+        return visited;
+    }
+
+    public void setVisited(Boolean visited) {
+        this.visited = visited;
+    }
+
+    @ColumnInfo(name = "visited")
+    Boolean visited = false;
+
     public String getAddress() {
         return address;
     }

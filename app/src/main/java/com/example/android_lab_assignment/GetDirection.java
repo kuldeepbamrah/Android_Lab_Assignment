@@ -7,6 +7,7 @@ import com.example.android_lab_assignment.MainActivity;
 import com.example.android_lab_assignment.Nearby.DataParser;
 import com.example.android_lab_assignment.Nearby.FetchURL;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -24,12 +25,14 @@ public class GetDirection extends AsyncTask <Object, String, String>
     String distance, duration;
 
     LatLng latLng;
+    LatLng latLng_user;
 
     @Override
     protected String doInBackground(Object... objects) {
         mMap = (GoogleMap) objects[0];
         url = (String) objects[1];
         latLng  =(LatLng) objects[2];
+        latLng_user = (LatLng)objects[3];
 
         FetchURL fetchURL = new FetchURL();
         try{
@@ -53,6 +56,7 @@ public class GetDirection extends AsyncTask <Object, String, String>
 
         mMap.clear();
         MapFragment mainActivity = new MapFragment();
+        CustomDirection customDirection = new CustomDirection();
 
         //create a new marker with distance and duration as title
         MarkerOptions options = new MarkerOptions()
@@ -62,13 +66,17 @@ public class GetDirection extends AsyncTask <Object, String, String>
                 .snippet("Distance : "+ distance);
         mMap.addMarker(options);
 
-        if(MapFragment.directionRequested)
-        {
+        mMap.addMarker(new MarkerOptions().position(latLng_user)
+                .title("Your Location")
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+//        if(MapFragment.directionRequested || CustomDirection.directionRequested)
+//        {
             String[] directionList;
             DataParser directionParser = new DataParser();
             directionList = directionParser.parseDirection(s);
             displayDirection(directionList);
-        }
+        //}
 
     }
 

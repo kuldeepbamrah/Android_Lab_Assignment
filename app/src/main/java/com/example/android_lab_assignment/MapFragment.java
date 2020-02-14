@@ -270,6 +270,8 @@ GoogleMap mMap;
                 FavLocation location = new FavLocation(locations.size()+1,latLng.latitude,latLng.longitude);
 
                 String address = getAddress(latLng.latitude,latLng.longitude);
+                String name = getName(latLng.latitude,latLng.longitude);
+                location.setName(name);
                 location.setAddress(address);
                 locationDB.daoObjct().insert(location);
 
@@ -288,6 +290,25 @@ GoogleMap mMap;
 
 
     }
+
+    private String getName(double latitude, double longitude) {
+        StringBuilder result = new StringBuilder();
+        try {
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses!=null && addresses.size() > 0 ) {
+                Address address = addresses.get(0);
+                result.append(address.getFeatureName());
+
+            }
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+
+
+        return result.toString();
+    }
+
     private String getDirectionUrl()
     {
         StringBuilder placeUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?"  );
@@ -338,7 +359,7 @@ GoogleMap mMap;
                 Address address = addresses.get(0);
                 result.append(address.getAddressLine(0)).append(" ");
                 result.append(address.getThoroughfare()).append(" ");
-                result.append(address.getLocality()).append(" ");
+                //result.append(address.getLocality()).append(" ");
                 result.append(address.getPostalCode()).append(" ");
                 result.append(address.getCountryName());
             }
@@ -439,10 +460,11 @@ GoogleMap mMap;
             case R.id.direction_btn:
                 url = getDirectionUrl();
                 Log.i("Main Activity",url);
-                Object[] dataTransfer = new Object[3];
+                Object[] dataTransfer = new Object[4];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = new LatLng(destLat,destLong);
+                dataTransfer[3] = new LatLng(latitude,longitude);
                 GetDirection getDirection = new GetDirection();
                 getDirection.execute(dataTransfer);
                 directionRequested = true;
@@ -483,9 +505,12 @@ GoogleMap mMap;
         url = getUrl( latitude, longitude, place );
         Log.i("MainActivity", url);
         // setmarkers( url );
-        Object[] dataTransfer = new Object[2];
+        Object[] dataTransfer = new Object[3];
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
+        //dataTransfer[3] = new LatLng(null,null);
+        //dataTransfer[2] = place;
+        //dataTransfer[3] = getContext();
         GetNearbyPlaceData getNearbyPlaceData = new GetNearbyPlaceData();
         getNearbyPlaceData.execute(dataTransfer);
     }

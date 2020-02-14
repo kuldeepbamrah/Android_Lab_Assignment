@@ -2,6 +2,7 @@ package com.example.android_lab_assignment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.security.acl.LastOwnerException;
 import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
@@ -54,11 +56,19 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     {
        final FavLocation favLocation = favLocationList.get(position);
 
-        holder.lat.setText("Lat: "+ favLocation.getLatitude());
-        holder.lng.setText( "Lng: " + favLocation.getLongitude() );
         holder.address.setText("Address: "+ favLocation.getAddress());
         holder.date.setText("Date: "+favLocation.getDate());
+        if(favLocation.getVisited())
+        {
+            holder.visitedTv.setTextColor(Color.parseColor("#00ff00"));
+            holder.visitedTv.setText("You have Visited This place");
+        }
 
+        else
+        {
+            holder.visitedTv.setText("You haven't Visited This place");
+
+        }
 
 
         holder.mycardview.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +102,18 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
                 getContext().startActivity(intent);
             }
         });
+        holder.visitedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FavLocation favLocation1 = favLocationList.get(position);
+                favLocation1.setVisited(true);
+                LocationDB locationDB = LocationDB.getInstance(context);
+                locationDB.daoObjct().update(favLocation1);
+                holder.visitedTv.setTextColor(Color.parseColor("#00ff00"));
+                holder.visitedTv.setText("You have Visited This place");
+                notifyItemChanged(position);
+            }
+        });
 
 
 
@@ -105,18 +127,20 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView lat, address, date, lng,temp;
+        TextView lat, address, date, lng,temp,visitedTv;
         CardView mycardview,mycardview1;
-        ImageButton directionBtn;
+        ImageButton directionBtn,visitedBtn;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mycardview = itemView.findViewById(R.id.newcard);
             //mycardview1 = itemView.findViewById(R.id.newcard1);
-            lat = itemView.findViewById( R.id.lat);
-            lng = itemView.findViewById( R.id.longi);
+
+
             address = itemView.findViewById(R.id.textView2);
             date = itemView.findViewById(R.id.textView3);
-            directionBtn = itemView.findViewById(R.id.directionBtn);
+            directionBtn = itemView.findViewById(R.id.directionBtn1);
+            visitedBtn = itemView.findViewById(R.id.visitedBtn);
+            visitedTv = itemView.findViewById(R.id.visitedTv);
 
             //expanded= false;
 

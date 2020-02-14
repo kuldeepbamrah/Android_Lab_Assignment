@@ -1,5 +1,6 @@
 package com.example.android_lab_assignment;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.android_lab_assignment.Nearby.GetNearbyPlaceData;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -19,15 +21,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,6 +67,47 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
         favLocation = getIntent().getParcelableExtra("data");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.map );
         mapFragment.getMapAsync( this );
+        String apiKey = getString(R.string.api_key);
+
+        /**
+         * Initialize Places. For simplicity, the API key is hard-coded. In a production
+         * environment we recommend using a secure mechanism to manage API keys.
+         */
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
+// Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        if(autocompleteFragment != null) {
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG,Place.Field.ADDRESS,Place.Field.ADDRESS_COMPONENTS));
+
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    LatLng latLng = place.getLatLng();
+                    if(latLng!=null) {
+                        //mMap.clear();
+                        mMap.addMarker(new MarkerOptions().position(latLng)
+                                .title(place.getName())
+                                .snippet(place.getAddress())
+                                .icon( BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_AZURE ) ));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12.0f));
+                    }
+
+                    //Toast.makeText(getContext(), "" + temp, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(@NonNull Status status) {
+
+                    Toast.makeText(CustomDirection.this, "" + status, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingBtn);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +193,7 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
                 .tilt( 45 )
                 .build();
         mMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
-        mMap.addMarker(new MarkerOptions().position(userLocation));
+        mMap.addMarker(new MarkerOptions().position(userLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -196,7 +247,34 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(Marker marker)
+    {
+        destLat = marker.getPosition().latitude;
+        destLong = marker.getPosition().longitude;
+        directionBtn.setVisibility(View.VISIBLE);
+        favbtn.setVisibility(View.VISIBLE);
+        Boolean present = false;
+        LocationDB locationDB = LocationDB.getInstance(this);
+        List<FavLocation> favLocations = locationDB.daoObjct().getDefault();
+        for (int i =0;i<favLocations.size();i++)
+        {
+            if(destLat == favLocations.get(i).getLatitude() && destLong == favLocations.get(i).getLongitude())
+            {
+                present = true;
+            }
+        }
+        if(present)
+        {
+            favbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_fav));
+            presentInDB = true;
+            //favbtn.setVisibility(View.GONE);
+        }
+        else
+        {
+            favbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_nfav));
+            presentInDB = false;
+            //favbtn.setVisibility(View.VISIBLE);
+        }
         return false;
     }
 
@@ -228,10 +306,11 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
             case R.id.direction_btn:
                 url = getDirectionUrl();
                 Log.i("Main Activity",url);
-                Object[] dataTransfer = new Object[3];
+                Object[] dataTransfer = new Object[4];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = new LatLng(destLat,destLong);
+                dataTransfer[3] = new LatLng(favLocation.getLatitude(),favLocation.getLongitude());
                 GetDirection getDirection = new GetDirection();
                 getDirection.execute(dataTransfer);
                 directionRequested = true;
@@ -279,11 +358,15 @@ public class CustomDirection extends AppCompatActivity implements OnMapReadyCall
         url = getUrl( favLocation.latitude, favLocation.longitude, place );
         Log.i("MainActivity", url);
         // setmarkers( url );
-        Object[] dataTransfer = new Object[2];
+        Object[] dataTransfer = new Object[3];
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
+        dataTransfer[2] = new LatLng(favLocation.latitude,favLocation.longitude);
         GetNearbyPlaceData getNearbyPlaceData = new GetNearbyPlaceData();
         getNearbyPlaceData.execute(dataTransfer);
+        mMap.addMarker(new MarkerOptions().position(new LatLng(favLocation.latitude,favLocation.latitude))
+        .title("your LOcation")
+        .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE )));
     }
     private String getUrl(double latitude, double longitude, String nearbyPlace)
     {
