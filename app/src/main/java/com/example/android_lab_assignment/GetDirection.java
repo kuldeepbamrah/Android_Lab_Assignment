@@ -2,6 +2,7 @@ package com.example.android_lab_assignment;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.widget.TextView;
 
 import com.example.android_lab_assignment.MainActivity;
 import com.example.android_lab_assignment.Nearby.DataParser;
@@ -24,6 +25,8 @@ public class GetDirection extends AsyncTask <Object, String, String>
 
     String distance, duration;
 
+    TextView dist,dur;
+
     LatLng latLng;
     LatLng latLng_user;
 
@@ -33,6 +36,8 @@ public class GetDirection extends AsyncTask <Object, String, String>
         url = (String) objects[1];
         latLng  =(LatLng) objects[2];
         latLng_user = (LatLng)objects[3];
+        dist = (TextView) objects[4];
+        dur = (TextView) objects[5];
 
         FetchURL fetchURL = new FetchURL();
         try{
@@ -43,6 +48,8 @@ public class GetDirection extends AsyncTask <Object, String, String>
         }
         return directionData;
     }
+
+
     
 
     @Override
@@ -76,6 +83,8 @@ public class GetDirection extends AsyncTask <Object, String, String>
             DataParser directionParser = new DataParser();
             directionList = directionParser.parseDirection(s);
             displayDirection(directionList);
+            dist.setText(distance);
+            dur.setText(duration);
         //}
 
     }

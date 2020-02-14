@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android_lab_assignment.Nearby.GetNearbyPlaceData;
@@ -79,6 +81,9 @@ GoogleMap mMap;
     FloatingActionButton directionBtn,favbtn;
     static Boolean directionRequested,presentInDB;
     BottomNavigationView bottomNavigationView;
+    CardView cardView;
+    TextView distance,duration;
+    String dist,dur;
 
 
 
@@ -233,6 +238,15 @@ GoogleMap mMap;
 
        favbtn = view.findViewById(R.id.fav_btn);
         favbtn.setOnClickListener(this);
+
+        Button stop = view.findViewById(R.id.stop_navigationBtn);
+        stop.setOnClickListener(this);
+
+        cardView = view.findViewById(R.id.customdistance);
+        distance = view.findViewById(R.id.distance_tv);
+        duration = view.findViewById(R.id.durationTv);
+
+
 
 
         //bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
@@ -460,15 +474,23 @@ GoogleMap mMap;
             case R.id.direction_btn:
                 url = getDirectionUrl();
                 Log.i("Main Activity",url);
-                Object[] dataTransfer = new Object[4];
+                Object[] dataTransfer = new Object[6];
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = new LatLng(destLat,destLong);
                 dataTransfer[3] = new LatLng(latitude,longitude);
+                dataTransfer[4] = distance;
+                dataTransfer[5] = duration;
                 GetDirection getDirection = new GetDirection();
                 getDirection.execute(dataTransfer);
+                dist = getDirection.distance;
+                dur = getDirection.duration;
                 directionRequested = true;
                 directionBtn.setVisibility(View.GONE);
+                favbtn.setVisibility(View.GONE);
+                cardView.setVisibility(View.VISIBLE);
+                distance.setText(dist);
+                duration.setText(dur);
 
                 break;
 
@@ -495,8 +517,18 @@ GoogleMap mMap;
                     favbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_fav));
                 }
 
+            case R.id.stop_navigationBtn:
+                mMap.clear();
+                cardView.setVisibility(View.GONE);
+                setStoredMarkers();
+
+
+
 
         }
+
+
+
 
     }
 

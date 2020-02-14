@@ -8,7 +8,7 @@
     app:showAsAction="ifRoom" />    <item
     android:id="@+id/action_list"
     android:enabled="true"
-    android:icon="@drawable/ic_action_list"
-    android:title="List"
+    android:icon="@drawable/ic_action_star"
+    android:title="Favourite"
     app:showAsAction="ifRoom" />    
 </menu>
