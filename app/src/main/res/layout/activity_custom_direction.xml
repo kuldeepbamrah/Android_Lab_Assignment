@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    tools:context=".MapFragment">
+
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="end|top"
+        android:id="@+id/floatingBtn"
+        android:src="@drawable/ic_action_overlay"
+        app:fabSize="mini"
+        app:backgroundTint="@color/white"
+        android:backgroundTint="@color/white"
+
+        android:tint="@color/colorPrimaryDark"
+        />
+
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@android:color/transparent"
+        android:elevation="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:background="@android:color/transparent"
+            android:id="@+id/searchLayout"
+
+            >
+            <fragment android:id="@+id/autocomplete_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+
+
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        android:scrollbars="none"
+        >
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@android:color/transparent"
+
+            >
+
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"
+                android:id="@+id/restaurant"
+                android:text="@string/restaurant"
+                android:background="@drawable/rouded_button"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"
+                android:id="@+id/cafe"
+                android:text="Cafe"
+                android:background="@drawable/ripple"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/mueseum"
+                android:text="Muesium"
+                android:background="@drawable/ripple"
+                android:textSize="10sp"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/hospital"
+                android:text="Hospital"
+                android:background="@drawable/ripple"
+                android:textSize="10sp"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/school"
+                android:text="School"
+                android:background="@drawable/ripple"
+                android:textSize="10sp"
+                />
+
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="60dp"
+        android:layout_height="130dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical"
+        >
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fav_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+
+            android:backgroundTint="@color/quantum_yellow700"
+            android:elevation="25dp"
+            android:src="@drawable/ic_action_fav"
+            android:visibility="gone"
+            app:backgroundTint="@color/quantum_bluegrey400"
+            >
+
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="bottom"
+            android:backgroundTint="@color/quantum_bluegrey400"
+            app:backgroundTint="@color/quantum_bluegrey400"
+            android:src="@drawable/ic_action_direction"
+            android:layout_marginTop="10dp"
+            android:id="@+id/direction_btn"
+            android:elevation="25dp"
+            android:visibility="gone"
+            >
+
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    </LinearLayout>
+
+
+</FrameLayout>
